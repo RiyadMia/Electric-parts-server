@@ -18,6 +18,21 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
+function verifyJWT(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).send({ message: "UnAuthorized access" });
+  }
+  const token = authHeader.split(" ")[1];
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+    if (err) {
+      return res.status(403).send({ message: "Forbidden access" });
+    }
+    req.decoded = decoded;
+    next();
+  });
+}
+
 async function run() {
   try {
     await client.connect();
@@ -28,6 +43,31 @@ async function run() {
     const boolingCallection = client.db("electric_parts").collection("booking");
 
     const userCollection = client.db("electric_parts").collection("users");
+
+    app.put("/user/admin/:email", verifyJWT, async (req, res) => {
+      const email = req.params.email;
+      const requester = req.decoded.email;
+      const requesterAccount = await userCollection.findOne({
+        email: requester,
+      });
+      if (requesterAccount.role === "admin") {
+        const filter = { email: email };
+        const updateDoc = {
+          $set: { role: "admin" },
+        };
+        const result = await userCollection.updateOne(filter, updateDoc);
+        res.send({ result });
+      } else {
+        res.status(403).send({ message: "forbiden" });
+      }
+    });
+
+    app.get("/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const user = await userCollection.findOne({ email: email });
+      const isAdmin = user.role === "admin";
+      res.send({ admin: isAdmin });
+    });
 
     app.put("/user/:email", async (req, res) => {
       const email = req.params.email;
@@ -47,11 +87,21 @@ async function run() {
       res.send({ result, token });
     });
 
-    app.get("/booking", async (req, res) => {
+    app.get("/user", verifyJWT, async (req, res) => {
+      const users = await userCollection.find().toArray();
+      res.send(users);
+    });
+
+    app.get("/booking", verifyJWT, async (req, res) => {
       const userEmail = req.query.userEmail;
-      const query = { userEmail: userEmail };
-      const booking = await boolingCallection.find(query).toArray();
-      res.send(booking);
+      const decodedEmail = req.decoded.email;
+      if (userEmail === decodedEmail) {
+        const query = { userEmail: userEmail };
+        const booking = await boolingCallection.find(query).toArray();
+        return res.send(booking);
+      } else {
+        return res.status(403).send({ message: "forbidden access" });
+      }
     });
 
     app.post("/booking", async (req, res) => {
