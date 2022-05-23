@@ -27,7 +27,7 @@ async function run() {
 
     const boolingCallection = client.db("electric_parts").collection("booking");
 
-    const userCollection = client.db("electric_parts ").collection("users");
+    const userCollection = client.db("electric_parts").collection("users");
 
     app.put("/user/:email", async (req, res) => {
       const email = req.params.email;
@@ -37,8 +37,14 @@ async function run() {
       const updateDoc = {
         $set: user,
       };
+      const token = jwt.sign(
+        { email: email },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "2h" }
+      );
+      console.log(token);
       const result = await userCollection.updateOne(filter, updateDoc, options);
-      res.send({ result });
+      res.send({ result, token });
     });
 
     app.get("/booking", async (req, res) => {
