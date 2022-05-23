@@ -27,6 +27,27 @@ async function run() {
 
     const boolingCallection = client.db("electric_parts").collection("booking");
 
+    const userCollection = client.db("electric_parts ").collection("users");
+
+    app.put("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const filter = { email: email };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: user,
+      };
+      const result = await userCollection.updateOne(filter, updateDoc, options);
+      res.send({ result });
+    });
+
+    app.get("/booking", async (req, res) => {
+      const userEmail = req.query.userEmail;
+      const query = { userEmail: userEmail };
+      const booking = await boolingCallection.find(query).toArray();
+      res.send(booking);
+    });
+
     app.post("/booking", async (req, res) => {
       const booking = req.body;
       const result = await boolingCallection.insertOne(booking);
