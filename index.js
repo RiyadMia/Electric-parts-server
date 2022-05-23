@@ -110,6 +110,13 @@ async function run() {
       res.send(result);
     });
 
+    //post
+    app.post("/service", async (req, res) => {
+      const newService = req.body;
+      const result = await serviceCallection.insertOne(newService);
+      res.send(result);
+    });
+
     app.get("/service", async (req, res) => {
       const query = {};
       const cursor = serviceCallection.find(query);
