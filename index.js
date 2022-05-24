@@ -50,6 +50,7 @@ async function run() {
       .collection("payments");
 
     const reviewCollection = client.db("electric_parts").collection("review");
+    const profileCollection = client.db("electric_parts").collection("profile");
 
     app.put("/user/admin/:email", verifyJWT, async (req, res) => {
       const email = req.params.email;
@@ -154,7 +155,18 @@ async function run() {
       const result = await boolingCallection.insertOne(booking);
       res.send(result);
     });
-
+    //profile
+    app.post("/profile", async (req, res) => {
+      const newService = req.body;
+      const result = await profileCollection.insertOne(newService);
+      res.send(result);
+    });
+    app.get("/profile", async (req, res) => {
+      const query = {};
+      const cursor = profileCollection.find(query);
+      const services = await cursor.toArray();
+      res.send(services);
+    });
     //review
     app.post("/review", async (req, res) => {
       const newService = req.body;
