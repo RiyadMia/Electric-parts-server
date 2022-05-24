@@ -49,6 +49,8 @@ async function run() {
       .db("electric_parts")
       .collection("payments");
 
+    const reviewCollection = client.db("electric_parts").collection("review");
+
     app.put("/user/admin/:email", verifyJWT, async (req, res) => {
       const email = req.params.email;
       const requester = req.decoded.email;
@@ -153,6 +155,19 @@ async function run() {
       res.send(result);
     });
 
+    //review
+    app.post("/review", async (req, res) => {
+      const newService = req.body;
+      const result = await reviewCollection.insertOne(newService);
+      res.send(result);
+    });
+    app.get("/review", async (req, res) => {
+      const query = {};
+      const cursor = reviewCollection.find(query);
+      const services = await cursor.toArray();
+      res.send(services);
+    });
+    //service
     //post
     app.post("/service", async (req, res) => {
       const newService = req.body;
@@ -165,6 +180,13 @@ async function run() {
       const cursor = serviceCallection.find(query);
       const services = await cursor.toArray();
       res.send(services);
+    });
+    // Delete
+    app.delete("/booking/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await boolingCallection.deleteOne(query);
+      res.send(result);
     });
 
     // Delete
