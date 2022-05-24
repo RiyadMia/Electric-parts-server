@@ -156,7 +156,7 @@ async function run() {
       res.send(result);
     });
     //profile
-    app.post("/profile", async (req, res) => {
+    app.post("/user/:id", async (req, res) => {
       const newService = req.body;
       const result = await profileCollection.insertOne(newService);
       res.send(result);
