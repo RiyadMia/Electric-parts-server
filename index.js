@@ -156,11 +156,11 @@ async function run() {
       res.send(result);
     });
     //profile
-    app.post("/user", async (req, res) => {
-      const newService = req.body;
-      const result = await userCollection.insertOne(newService);
-      res.send(result);
-    });
+    // app.post("/user", async (req, res) => {
+    // const newService = req.body;
+    // // const result = await userCollection.insertOne(newService);
+    // res.send(result);
+    // });
     app.get("/user/admin/:email", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
