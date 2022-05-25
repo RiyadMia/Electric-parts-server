@@ -161,12 +161,12 @@ async function run() {
     // // const result = await userCollection.insertOne(newService);
     // res.send(result);
     // });
-    app.get("/user/admin/:email", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const booking = await userCollection.findOne(query);
-      res.send(booking);
-    });
+    // app.get("/user/admin/:email", async (req, res) => {
+    // const id = req.params.id;
+    // const query = { _id: ObjectId(id) };
+    // const booking = await userCollection.findOne(query);
+    // res.send(booking);
+    // });
     //review
     app.post("/review", async (req, res) => {
       const newService = req.body;
