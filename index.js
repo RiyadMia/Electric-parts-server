@@ -142,7 +142,7 @@ async function run() {
       );
       res.send(updatedBooking);
     });
-
+    // booking
     app.get("/booking/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
@@ -156,16 +156,16 @@ async function run() {
       res.send(result);
     });
     //profile
-    app.post("/user/:id", async (req, res) => {
+    app.post("/user", async (req, res) => {
       const newService = req.body;
-      const result = await profileCollection.insertOne(newService);
+      const result = await userCollection.insertOne(newService);
       res.send(result);
     });
-    app.get("/profile", async (req, res) => {
-      const query = {};
-      const cursor = profileCollection.find(query);
-      const services = await cursor.toArray();
-      res.send(services);
+    app.get("/user/admin/:email", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const booking = await userCollection.findOne(query);
+      res.send(booking);
     });
     //review
     app.post("/review", async (req, res) => {
