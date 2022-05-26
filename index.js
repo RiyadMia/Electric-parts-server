@@ -181,14 +181,14 @@ async function run() {
 
     app.post("/profile", async (req, res) => {
       const newService = req.body;
-      const result = await userCollection.insertOne(newService);
+      const result = await profileCollection.insertOne(newService);
       res.send(result);
     });
 
     app.get("/profile/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
-      const booking = await userCollection.findOne(query);
+      const booking = await profileCollection.findOne(query);
       res.send(booking);
     });
 
