@@ -177,20 +177,6 @@ async function run() {
       const result = await boolingCallection.insertOne(booking);
       res.send(result);
     });
-    //profile
-
-    app.post("/profile", async (req, res) => {
-      const newService = req.body;
-      const result = await profileCollection.insertOne(newService);
-      res.send(result);
-    });
-
-    app.get("/profile/:id", verifyJWT, async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const booking = await profileCollection.findOne(query);
-      res.send(booking);
-    });
 
     //review
     app.post("/review", async (req, res) => {
