@@ -112,7 +112,7 @@ async function run() {
         process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: "1h" }
       );
-      console.log(token);
+
       const result = await userCollection.updateOne(filter, updateDoc, options);
       res.send({ result, token });
     });
@@ -176,6 +176,20 @@ async function run() {
       const booking = req.body;
       const result = await boolingCallection.insertOne(booking);
       res.send(result);
+    });
+    //profile
+
+    app.post("/profile", async (req, res) => {
+      const newService = req.body;
+      const result = await userCollection.insertOne(newService);
+      res.send(result);
+    });
+
+    app.get("/profile/:id", verifyJWT, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const booking = await userCollection.findOne(query);
+      res.send(booking);
     });
 
     //review
